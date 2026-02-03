@@ -16,6 +16,7 @@ import java.util.List;
 @CrossOrigin(origins = "${SPRING_ORIGINS:*}")
 @RequestMapping("/students")
 public class StudentController {
+    private static int maxProjectPerStudent = 3;
     @Autowired
     private ProjectRepository projectRepository;
 
@@ -63,5 +64,40 @@ public class StudentController {
         Student student = retieveStudentById(id);
         studentRepository.delete(student);
         return ResponseEntity.ok("Student deleted successfully!");
+    }
+
+    @GetMapping("/max_project")
+    public ResponseEntity<Integer> getMaxProjectPerStudent() {
+        return ResponseEntity.ok(maxProjectPerStudent);
+    }
+
+    @PutMapping("/max_project")
+    public ResponseEntity<Integer> updateMaxProjectPerStudent(@RequestBody int maxNumber) {
+        maxProjectPerStudent = maxNumber;
+        return ResponseEntity.ok(maxNumber);
+    }
+
+    @PostMapping("/{student_id}/projects/{project_id}")
+    public ResponseEntity<Student> addProjectToStudent(@PathVariable int student_id, @PathVariable int project_id) {
+        Student student = retieveStudentById(student_id);
+        Project project = retieveProjectById(project_id);
+        for (Project p: student.getProjects()) {
+            if(p.getId() == project.getId()) {
+                return ResponseEntity.status(400).body(student);
+            }
+        }
+        if (student.getProjects().size() >= maxProjectPerStudent){
+            return ResponseEntity.badRequest().body(student);
+        }
+        student.getProjects().add(project);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentRepository.save(student));
+    }
+
+    @DeleteMapping("/{student_id}/projects/{project_id}")
+    public ResponseEntity<Student> deleteProjectFromStudent(@PathVariable int student_id, @PathVariable int project_id) {
+        Student student = retieveStudentById(student_id);
+        Project project = retieveProjectById(project_id);
+        student.getProjects().remove(project);
+        return  ResponseEntity.ok(studentRepository.save(student));
     }
 }
