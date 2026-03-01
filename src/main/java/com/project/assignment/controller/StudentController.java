@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "${SPRING_ORIGINS:*}")
+@CrossOrigin(origins = "*")
 @RequestMapping("/students")
 public class StudentController {
     private static int maxProjectPerStudent = 3;
@@ -111,7 +111,7 @@ public class StudentController {
         return ResponseEntity.ok(student.getProjects());
     }
 
-    @GetMapping("{student_id}/availableProjects")
+    @GetMapping("{student_id}/availableprojects")
     public ResponseEntity<List<Project>> getStudentAvailableProjects(@PathVariable int student_id) {
         Student student = retieveStudentById(student_id);
         List<Project> availableProjects = new ArrayList<>();

@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM STUDENT_PROJECT WHERE PROJECT_ID=?1", nativeQuery = true)
+    @Query(value = "DELETE FROM student_project WHERE PROJECT_ID=?1", nativeQuery = true)
     public void deleteProjectById(Integer project_id );
 }

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: project_assignment
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: .
+    container_name: springboot-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: 1234
